@@ -1,14 +1,35 @@
 #include "game.h"
+#include "template.h"
 #include "surface.h"
 #include <cstdio> //printf
+#include "ball.h"
+#include "paddle.h"
+#include "brick.h"
 
 namespace Tmpl8
 {
+	const int BRICK_ROWS = 8;
+	const int BRICK_COLUMNS = 8;
+	const int GAP = 2; // pixels between bricks
+	const int GRID_WIDTH = BRICK_ROWS * (Brick::BRICK_WIDTH + GAP) - GAP; // subtract trailing gap
+	const int OFFSET_X = (ScreenWidth - GRID_WIDTH) / 2;
+
+	Ball ball;
+	Paddle paddle;
+	Brick bricks[BRICK_ROWS][BRICK_COLUMNS];
+
 	// -----------------------------------------------------------
 	// Initialize the application
 	// -----------------------------------------------------------
 	void Game::Init()
 	{
+		for (int i = 0; i < BRICK_ROWS; i++)
+		{
+			for (int j = 0; j < BRICK_COLUMNS; j++)
+			{
+				bricks[i][j].powerup = (Brick::PowerupType)IRand(3);
+			}
+		}
 	}
 	
 	// -----------------------------------------------------------
@@ -18,23 +39,19 @@ namespace Tmpl8
 	{
 	}
 
-	static Sprite rotatingGun(new Surface("assets/aagun.tga"), 36);
-	static int frame = 0;
-
 	// -----------------------------------------------------------
 	// Main application tick function
 	// -----------------------------------------------------------
 	void Game::Tick(float deltaTime)
 	{
-		// clear the graphics window
-		screen->Clear(0);
-		// print something in the graphics window
-		screen->Print("hello world", 2, 2, 0xffffff);
-		// print something to the text window
-		printf("this goes to the console window.\n");
-		// draw a sprite
-		rotatingGun.SetFrame(frame);
-		rotatingGun.Draw(screen, 100, 100);
-		if (++frame == 36) frame = 0;
+		for (int i = 0; i < BRICK_ROWS; i++)
+		{
+			for (int j = 0; j < BRICK_COLUMNS; j++)
+			{
+				bricks[i][j].Draw(screen,
+					OFFSET_X + j * (Brick::BRICK_WIDTH + GAP),
+					i * (Brick::BRICK_HEIGHT + GAP));
+			}
+		}
 	}
 };
