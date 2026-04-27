@@ -18,6 +18,16 @@ namespace Tmpl8
 	Paddle paddle;
 	Brick bricks[BRICK_ROWS][BRICK_COLUMNS];
 
+
+	// -----------------------------------------------------------
+	// Handle mouse movement
+	// -----------------------------------------------------------
+	void Game::MouseMoveAbsolute(int x, int y)
+	{
+		mouseX = x;
+		mouseY = y;
+	}
+
 	// -----------------------------------------------------------
 	// Initialize the application
 	// -----------------------------------------------------------
@@ -44,6 +54,11 @@ namespace Tmpl8
 	// -----------------------------------------------------------
 	void Game::Tick(float deltaTime)
 	{
+		screen->Clear(0); // clear the screen to black
+		paddle.Move(mouseX);
+		paddle.Draw(screen);
+
+
 		for (int i = 0; i < BRICK_ROWS; i++)
 		{
 			for (int j = 0; j < BRICK_COLUMNS; j++)

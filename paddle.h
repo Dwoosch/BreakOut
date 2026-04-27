@@ -1,26 +1,19 @@
 #pragma once
-class Surface;
+#include "surface.h"
 class Paddle
 {
 public:
-	Paddle() : y(450), height(15)
-	{
-		x = 400; // set the paddle's initial position
-		dx = 0; // set the paddle's initial velocity
-		width = 64; // set the paddle's initial width
-	}
 	int x;
 	const int y;
-	int dx;
 	int width;
 	const int height;
 	
-	void Move()
+	void Move(int mouseX);
+	void Draw(Tmpl8::Surface* surface);
+
+	Paddle() : y(475), height(15)
 	{
-		// move the paddle by dx, keeping it within the screen bounds
-	}
-	void Draw(Surface* surface)
-	{
-		// draw the paddle at (x, y) with the specified width and height
+		x = 400; // set the paddle's initial position
+		width = 64; // set the paddle's initial width
 	}
 };

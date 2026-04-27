@@ -388,7 +388,9 @@ int main( int argc, char **argv )
 				game->KeyUp( event.key.keysym.scancode );
 				break;
 			case SDL_MOUSEMOTION:
-				game->MouseMove( event.motion.xrel, event.motion.yrel );
+				game->MouseMove(  event.motion.xrel, event.motion.yrel );
+				// Added absolute mouse move, in case you want to use it (e.g. for a menu) and my use case
+				game->MouseMoveAbsolute(event.motion.x, event.motion.y);
 				break;
 			case SDL_MOUSEBUTTONUP:
 				game->MouseUp( event.button.button );
