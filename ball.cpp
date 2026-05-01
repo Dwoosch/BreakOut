@@ -10,7 +10,7 @@ void Ball::Move()
 	{
 		dx = -dx;
 	}
-	if (y < 0 || y > 512)
+	if (y < 0)
 	{
 		dy = -dy;
 	}
@@ -18,5 +18,5 @@ void Ball::Move()
 
 void Ball::Draw(Tmpl8::Surface* surface) 
 {
-	surface->Circle(x, y, 10, 0xFFFFFF);
+	surface->Circle((int)x, (int)y, 10, 0xFFFFFF);
 }

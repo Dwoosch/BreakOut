@@ -6,9 +6,9 @@ class Ball
 	enum Shapes { CIRCLE, SQUARE, TRIANGLE };
 
 public:
-	int x, y;
-	int dx, dy;
-	const int velocity = 5; // set the ball's velocity
+	float x, y;
+	float dx, dy;
+	const float velocity = 5.0f; // set the ball's velocity
 	Shapes shape;
 	void Move();
 
@@ -16,10 +16,10 @@ public:
 
 	Ball()
 	{
-		x = 200;
-		y = 300;
-		dx = velocity;
-		dy = velocity;
+		x = 400;
+		y = 465;
+		dx = 0;
+		dy = 0;
 		shape = CIRCLE;
 	}
 };

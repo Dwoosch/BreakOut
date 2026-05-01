@@ -13,7 +13,7 @@ public:
 
 	Paddle() : y(475), height(15)
 	{
-		x = 400; // set the paddle's initial position
 		width = 128; // set the paddle's initial width
+		x = 400 - width / 2;
 	}
 };
