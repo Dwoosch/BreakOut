@@ -207,6 +207,20 @@ void Surface::Bar( int x1, int y1, int x2, int y2, Pixel c )
 	}
 }
 
+void Surface::Circle(int a_X, int a_Y, int a_Radius, Pixel a_Color)
+{
+	for (int y = -a_Radius; y <= a_Radius; y++)
+	{
+		for (int x = -a_Radius; x <= a_Radius; x++)
+		{
+			if ((x * x + y * y) <= (a_Radius * a_Radius))
+			{
+				Plot(a_X + x, a_Y + y, a_Color);
+			}
+		}
+	}
+}
+
 void Surface::CopyTo( Surface* a_Dst, int a_X, int a_Y )
 {
 	Pixel* dst = a_Dst->GetBuffer();

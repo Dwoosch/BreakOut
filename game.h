@@ -16,6 +16,10 @@ public:
 	void MouseDown( int button ) { /* implement if you want to detect mouse button presses */ }
 	void MouseMove(int x, int  y) { /* implement if you want to detect mouse movement */ }
 	void MouseMoveAbsolute(int x, int y);
+	bool CheckCollision2D(int ax, int ay, int aw, int ah, int bx, int by, int bw, int bh) 
+	{
+		return (ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by);
+	}
 	void KeyUp( int key ) { /* implement if you want to handle keys */ }
 	void KeyDown( int key ) { /* implement if you want to handle keys */ }
 private:

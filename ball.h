@@ -1,5 +1,6 @@
 #pragma once
-class Surface;
+#include "surface.h"
+
 class Ball
 {
 	enum Shapes { CIRCLE, SQUARE, TRIANGLE };
@@ -7,22 +8,19 @@ class Ball
 public:
 	int x, y;
 	int dx, dy;
+	const int velocity = 5; // set the ball's velocity
 	Shapes shape;
-	void Move()
-	{
-		// move the ball by dx and dy, bouncing off the walls
-	}
-	void Draw(Surface* surface)
-	{
-		// draw the ball at (x, y) with shape determined by dx and dy
-	}
+	void Move();
+
+	void Draw(Tmpl8::Surface* surface);
+
 	Ball()
 	{
-		x = 200; // set the ball's initial position
+		x = 200;
 		y = 300;
-		dx = 0; // set the ball's initial velocity
-		dy = 0;
-		shape = CIRCLE; // set the ball's shape based on its velocity
+		dx = velocity;
+		dy = velocity;
+		shape = CIRCLE;
 	}
 };
 
