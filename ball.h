@@ -9,6 +9,7 @@ public:
 	float x, y;
 	float dx, dy;
 	const float velocity = 5.0f; // set the ball's velocity
+	bool inPlay; // indicates whether the ball is currently in play
 	Shapes shape;
 	void Move();
 
@@ -21,6 +22,7 @@ public:
 		dx = 0;
 		dy = 0;
 		shape = CIRCLE;
+		inPlay = false;
 	}
 };
 

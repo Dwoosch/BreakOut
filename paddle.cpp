@@ -3,7 +3,7 @@
 
 void Paddle::Move(int mouseX)
 {
-	x = mouseX;
+	x = mouseX - width / 2;
 	if (x < 0) x = 0; // prevent moving off the left edge
 	if (x + width > 800) x = 800 - width; // prevent moving off the right edge
 }
