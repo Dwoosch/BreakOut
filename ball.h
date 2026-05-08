@@ -8,12 +8,12 @@ class Ball
 public:
 	float x, y;
 	float dx, dy;
-	const float velocity = 5.0f; // set the ball's velocity
 	bool inPlay; // indicates whether the ball is currently in play
 	Shapes shape;
 	void Move();
 
 	void Draw(Tmpl8::Surface* surface);
+	int GetVelocity() const;
 
 	Ball()
 	{
@@ -24,5 +24,8 @@ public:
 		shape = CIRCLE;
 		inPlay = false;
 	}
+
+private:
+	const float velocity = 5.0f; // set the ball's velocity
 };
 

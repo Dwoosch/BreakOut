@@ -20,3 +20,8 @@ void Ball::Draw(Tmpl8::Surface* surface)
 {
 	surface->Circle((int)x, (int)y, 10, 0xFFFFFF);
 }
+
+int Ball::GetVelocity() const 
+{
+	return velocity;
+}

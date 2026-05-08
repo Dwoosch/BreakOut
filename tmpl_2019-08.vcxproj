@@ -226,6 +226,7 @@
     <ClCompile Include="brick.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="paddle.cpp" />
+    <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="surface.cpp" />
     <ClCompile Include="template.cpp" />
   </ItemGroup>
@@ -234,6 +235,7 @@
     <ClInclude Include="brick.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="paddle.h" />
+    <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="surface.h" />
     <ClInclude Include="template.h" />
   </ItemGroup>
