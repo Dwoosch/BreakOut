@@ -2,6 +2,7 @@
 
 void ParticleSystem::Emit(int count, float x, float y, float lifetime, Tmpl8::Pixel color)
 {
+	// emit 'count' particles at the specified position with random velocities and the given lifetime and color
 	for (int i = 0; i < count; i++)
 	{
 		for (auto& particle : particles)
@@ -24,6 +25,7 @@ void ParticleSystem::Emit(int count, float x, float y, float lifetime, Tmpl8::Pi
 
 void ParticleSystem::Update(float deltaTime)
 {
+	// update each active particle's position based on its velocity and decrease its lifetime by deltaTime
 	for (auto& particle : particles)
 	{
 		if (!particle.active)
@@ -40,6 +42,7 @@ void ParticleSystem::Update(float deltaTime)
 
 void ParticleSystem::Draw(Tmpl8::Surface* surface)
 {
+	// draw each active particle as a circle on the surface, fading it out as it ages
 	for (const auto& particle : particles)
 	{
 		if (particle.active)
@@ -53,6 +56,7 @@ void ParticleSystem::Draw(Tmpl8::Surface* surface)
 
 Tmpl8::Pixel ParticleSystem::ScalePixelColor(Tmpl8::Pixel c, float weight)
 {
+	// extract RGB components, scale them by the weight, and recombine into a single pixel value
 	int r = (c >> 16) & 0xFF;
 	int g = (c >> 8) & 0xFF;
 	int b = c & 0xFF;

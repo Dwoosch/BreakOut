@@ -32,6 +32,7 @@ public:
 	void HandlePaddleCollision();
 	void ActivateMultiBallPowerup(float sourceDx, float sourceDy, float sourceX, float sourceY);
 	void ActivateWidePaddlePowerup();
+	void ScreenShake(float intensity);
 	void KeyUp( int key ) { /* implement if you want to handle keys */ }
 	void KeyDown( int key ) { /* implement if you want to handle keys */ }
 private:

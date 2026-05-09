@@ -17,10 +17,13 @@ namespace Tmpl8
 	enum GameState { AIMING, PLAYING, GAMEOVER };
 	GameState currentState = AIMING;
 	float widePaddleTimer = 0.0f;
+	const float WIDE_PADDLE_MULTIPLIER = 1.5f;
 	bool widePaddleActive = false;
 	int lives = 3;
 	int score = 0;
 	const int MAX_BALLS = 6;
+	float shakeIntensity = 0.0f;
+	Surface* backBuffer;
 
 	// Constants for the brick grid
 	const int BRICK_ROWS = 8;
@@ -40,6 +43,7 @@ namespace Tmpl8
 	// -----------------------------------------------------------
 	bool Game::AllBricksDestroyed()
 	{
+		// loop through all bricks and check if any are not destroyed
 		for (int i = 0; i < BRICK_ROWS; i++)
 		{
 			for (int j = 0; j < BRICK_COLUMNS; j++)
@@ -58,6 +62,7 @@ namespace Tmpl8
 	// -----------------------------------------------------------
 	bool Game::AllBallsLost()
 	{
+		// loop through all balls and check if any are still in play
 		for (int i = 0; i < MAX_BALLS; i++)
 		{
 			if (balls[i].inPlay)
@@ -151,18 +156,21 @@ namespace Tmpl8
 	// -----------------------------------------------------------
 	void Game::DrawTrajectory(float startX, float startY, float dirX, float dirY)
 	{
+		// calculate intersection with walls
 		float t1 = (ScreenWidth - startX) / dirX;
 		float t2 = -startX / dirX;
 		float t3 = -startY / dirY;
 
+		// find the smallest positive t to determine which wall is hit first
 		float t = FLT_MAX;
 		if (t1 > 0) t = std::min(t, t1);
 		if (t2 > 0) t = std::min(t, t2);
 		if (t3 > 0) t = std::min(t, t3);
 
+		// calculate the hit point
 		float hitX = startX + dirX * t;
 		float hitY = startY + dirY * t;
-		screen->Line(startX, startY, hitX, hitY, 0xFFFFFF);
+		backBuffer->Line(startX, startY, hitX, hitY, 0xFFFFFF);
 
 		if (t == t1 || t == t2) dirX = -dirX; // hit left or right wall
 		if (t == t3) dirY = -dirY; // hit top wall
@@ -177,7 +185,7 @@ namespace Tmpl8
 		if (t3 > 0) T = std::min(T, t3);
 		float hitX2 = hitX + dirX * T;
 		float hitY2 = hitY + dirY * T;
-		screen->Line(hitX, hitY, hitX2, hitY2, 0xFFFFFF);
+		backBuffer->Line(hitX, hitY, hitX2, hitY2, 0xFFFFFF);
 	}
 
 	// -----------------------------------------------------------
@@ -221,6 +229,7 @@ namespace Tmpl8
 
 					HandlePowerup(bricks[row][col].GetPowerupType(), balls[i].dx, balls[i].dy, balls[i].x, balls[i].y);
 					bricks[row][col].destroyed = true;
+					shakeIntensity = 5.0f; // set shake intensity for screen shake effect
 					particleSystem.Emit(20, balls[i].x, balls[i].y, 1000.0f, bricks[row][col].GetColor());
 					score += 100;
 					int ballLeft = balls[i].x - 5;
@@ -231,9 +240,11 @@ namespace Tmpl8
 					int brickRight = brickX + Brick::BRICK_WIDTH;
 					int brickBottom = brickY + Brick::BRICK_HEIGHT;
 
+					// calculate overlap on both axes
 					int overlapX = std::min(ballRight - brickX, brickRight - ballLeft);
 					int overlapY = std::min(ballBottom - brickY, brickBottom - ballTop);
 
+					// determine collision side based on smaller overlap
 					if (overlapX < overlapY)
 					{
 						balls[i].dx = -balls[i].dx; // reverse horizontal direction
@@ -309,9 +320,9 @@ namespace Tmpl8
 	void Game::ActivateWidePaddlePowerup()
 	{
 		// Increase paddle width by 50% for 10 seconds
-		paddle.width = 192; // 128 * 1.5
+		paddle.width = (int)(128 * WIDE_PADDLE_MULTIPLIER); // 128 * 1.5
 		widePaddleActive = true;
-		widePaddleTimer = 10000.0f; // reset timer
+		widePaddleTimer = 10000.0f; // reset timer to 10 seconds (10000 milliseconds)
 
 	}
 
@@ -320,6 +331,9 @@ namespace Tmpl8
 	// -----------------------------------------------------------
 	void Game::Init()
 	{
+		// create a back buffer surface for screen shake effect
+		backBuffer = new Surface(ScreenWidth, ScreenHeight);
+		// set the first ball to be in play and reset the grid to initialize bricks and powerups
 		balls[0].inPlay = true;
 		ResetGrid();
 	}
@@ -329,6 +343,8 @@ namespace Tmpl8
 	// -----------------------------------------------------------
 	void Game::Shutdown()
 	{
+		// clean up back buffer surface
+		delete backBuffer;
 	}
 
 	// -----------------------------------------------------------
@@ -337,19 +353,29 @@ namespace Tmpl8
 	void Game::Tick(float deltaTime)
 	{
 		screen->Clear(0); // clear the screen to black
+		backBuffer->Clear(0); // clear the back buffer to black
+		// calculate shake offset
+		int shakeX = 0, shakeY = 0;
+		if (shakeIntensity > 0)
+		{
+			int range = std::max(1, (int)(shakeIntensity * 2));
+			shakeX = (rand() % range) - (int)shakeIntensity;
+			shakeY = (rand() % range) - (int)shakeIntensity;
+			shakeIntensity -= deltaTime * 0.005f;
+			if (shakeIntensity < 0) shakeIntensity = 0;
+		}
+
 		char buffer[32];
 		sprintf(buffer, "Score: %d", score);
-		screen->Print(buffer, 10, 10, 0xFFFFFF);
+		backBuffer->Print(buffer, 10, 10, 0xFFFFFF);
 		sprintf(buffer, "Lives: %d", lives);
-		screen->Print(buffer, 750, 10, 0xFFFFFF);
-		paddle.Draw(screen);
-		particleSystem.Update(deltaTime);
-		particleSystem.Draw(screen);
+		backBuffer->Print(buffer, 750, 10, 0xFFFFFF);
+		paddle.Draw(backBuffer);
 		for (int i = 0; i < MAX_BALLS; i++)
 		{
 			if (balls[i].inPlay)
 			{
-				balls[i].Draw(screen);
+				balls[i].Draw(backBuffer);
 			}
 		}
 
@@ -357,16 +383,18 @@ namespace Tmpl8
 		{
 			for (int j = 0; j < BRICK_COLUMNS; j++)
 			{
-				bricks[i][j].Draw(screen,
+				bricks[i][j].Draw(backBuffer,
 					OFFSET_X + j * (Brick::BRICK_WIDTH + GAP),
 					i * (Brick::BRICK_HEIGHT + GAP));
 			}
 		}
+		particleSystem.Update(deltaTime);
+		particleSystem.Draw(backBuffer);
 
 		switch (currentState)
 		{
 			case AIMING:
-				screen->Centre("Click to Aim", ScreenHeight / 2, 0xFFFFFF);
+				backBuffer->Centre("Click to Aim", ScreenHeight / 2, 0xFFFFFF);
 				HandleAimingState();
 				break;
 			case PLAYING:
@@ -387,12 +415,12 @@ namespace Tmpl8
 					if (balls[i].inPlay)
 					{
 						balls[i].Move();
-						// emit a trail particle at the ball's position
-						particleSystem.Emit(1, balls[i].x, balls[i].y, 100.0f, 0xFFFFFF);
 					}
 				}
 
 				HandleBrickCollisions();
+				if (currentState != PLAYING) 
+					break;
 				HandlePaddleCollision();
 
 				// Check if the ball has fallen below the screen
@@ -422,9 +450,11 @@ namespace Tmpl8
 				}
 				break;
 			case GAMEOVER:
-				screen->Centre("Game Over", ScreenHeight / 2, 0xFFFFFF);
+				backBuffer->Centre("Game Over", ScreenHeight / 2, 0xFFFFFF);
 				break;
-
 		}
+
+		// copy backbuffer to screen with shake offset
+		backBuffer->CopyTo(screen, shakeX, shakeY);
 	}
 };
