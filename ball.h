@@ -10,7 +10,7 @@ public:
 	float dx, dy;
 	bool inPlay; // indicates whether the ball is currently in play
 	Shapes shape;
-	void Move();
+	void Move(bool bounceBottom);
 
 	void Draw(Tmpl8::Surface* surface);
 	int GetVelocity() const;

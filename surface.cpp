@@ -207,6 +207,7 @@ void Surface::Bar( int x1, int y1, int x2, int y2, Pixel c )
 	}
 }
 
+// Draw a filled circle using the midpoint circle algorithm
 void Surface::Circle(int a_X, int a_Y, int a_Radius, Pixel a_Color)
 {
 	for (int y = -a_Radius; y <= a_Radius; y++)

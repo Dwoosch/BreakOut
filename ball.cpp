@@ -1,6 +1,6 @@
 #include "ball.h"
 
-void Ball::Move() 
+void Ball::Move(bool bounceBottom) 
 {
 	x += dx;
 	y += dy;
@@ -10,7 +10,7 @@ void Ball::Move()
 	{
 		dx = -dx;
 	}
-	if (y < 0)
+	if (y < 0 || (bounceBottom && y > 512))
 	{
 		dy = -dy;
 	}
