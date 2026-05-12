@@ -1,4 +1,5 @@
 #include "ball.h"
+#include "GameState.h"
 
 void Ball::Move(bool bounceBottom) 
 {
@@ -9,6 +10,7 @@ void Ball::Move(bool bounceBottom)
 	if (x < 0 || x > 800)
 	{
 		dx = -dx;
+		ma_engine_play_sound(&engine, "assets/ballbounce.mp3", NULL);
 	}
 	if (y < 0 || (bounceBottom && y > 512))
 	{

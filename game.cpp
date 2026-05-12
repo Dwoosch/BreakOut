@@ -1,7 +1,11 @@
+#define MINIAUDIO_IMPLEMENTATION
+#include "miniaudio.h"	
 #include "game.h"
 #include "GameScene.h"
 #include "MenuScene.h"
 #include "GameOverScene.h"
+
+ma_engine engine;
 
 namespace Tmpl8 {
 	MenuScene menuScene;
@@ -29,6 +33,8 @@ namespace Tmpl8 {
 	// -----------------------------------------------------------
 	void Game::Init()
 	{
+		ma_engine_init(NULL, &engine);
+		ma_engine_set_volume(&engine, 0.3f); // 0.0 to 1.0
 		menuScene.SetTargetScene(&gameScene);
 		gameScene.SetTargetScene(&gameOverScene);
 		gameOverScene.SetTargetScene(&menuScene);
@@ -42,6 +48,7 @@ namespace Tmpl8 {
 	// -----------------------------------------------------------
 	void Game::Shutdown()
 	{
+		ma_engine_uninit(&engine);
 		currentScene->Shutdown();
 	}
 		

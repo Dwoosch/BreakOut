@@ -37,6 +37,7 @@
     <ClInclude Include="GameState.h" />
     <ClInclude Include="MenuScene.h" />
     <ClInclude Include="GameOverScene.h" />
+    <ClInclude Include="miniaudio.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="template code">

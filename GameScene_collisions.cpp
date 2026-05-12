@@ -28,6 +28,7 @@ void GameScene::HandleBrickCollisions()
 				HandlePowerup(bricks[row][col].GetPowerupType(), balls[i].dx, balls[i].dy, balls[i].x, balls[i].y);
 				bricks[row][col].destroyed = true;
 				shakeIntensity = 5.0f; // set shake intensity for screen shake effect
+				ma_engine_play_sound(&engine, "assets/collision.wav", NULL);
 				particleSystem.Emit(20, balls[i].x, balls[i].y, 1000.0f, bricks[row][col].GetColor());
 				score += 100;
 				int ballLeft = balls[i].x - 5;
@@ -39,8 +40,8 @@ void GameScene::HandleBrickCollisions()
 				int brickBottom = brickY + Brick::BRICK_HEIGHT;
 
 				// calculate overlap on both axes
-				int overlapX = std::min(ballRight - brickX, brickRight - ballLeft);
-				int overlapY = std::min(ballBottom - brickY, brickBottom - ballTop);
+				int overlapX = (std::min)(ballRight - brickX, brickRight - ballLeft);
+				int overlapY = (std::min)(ballBottom - brickY, brickBottom - ballTop);
 
 				// determine collision side based on smaller overlap
 				if (overlapX < overlapY)
@@ -84,6 +85,7 @@ void GameScene::HandlePaddleCollision()
 				{
 					balls[i].dy = -balls[i].GetVelocity() * cos(angle);
 				}
+				ma_engine_play_sound(&engine, "assets/ballbounce.mp3", NULL);
 			}
 		}
 	}

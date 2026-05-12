@@ -6,6 +6,10 @@
 #include "surface.h"
 #include <array>
 #include "template.h"
+#include "miniaudio.h"
+
+extern ma_engine engine;
+extern ma_sound backgroundMusic;
 
 enum GameState { AIMING, PLAYING, GAMEOVER };
 

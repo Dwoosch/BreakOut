@@ -8,7 +8,6 @@
 #include "paddle.h"
 #include "ParticleSystem.h"
 #include <cmath>
-#include <SDL_stdinc.h>
 #include <algorithm>
 #include <array>
 #include <cstdlib>
@@ -20,6 +19,8 @@ int lives = 3;
 int score = 0;
 float shakeIntensity = 0.0f;
 Tmpl8::Surface* backBuffer;
+ma_sound backgroundMusic;
+float musicDelay = 2000.0f;
 
 std::array<Ball, MAX_BALLS> balls;
 Paddle paddle;
@@ -80,9 +81,9 @@ void GameScene::DrawTrajectory(float startX, float startY, float dirX, float dir
 
 	// find the smallest positive t to determine which wall is hit first
 	float t = FLT_MAX;
-	if (t1 > 0) t = std::min(t, t1);
-	if (t2 > 0) t = std::min(t, t2);
-	if (t3 > 0) t = std::min(t, t3);
+	if (t1 > 0) t = (std::min)(t, t1);
+	if (t2 > 0) t = (std::min)(t, t2);
+	if (t3 > 0) t = (std::min)(t, t3);
 
 	// calculate the hit point
 	float hitX = startX + dirX * t;
@@ -97,9 +98,9 @@ void GameScene::DrawTrajectory(float startX, float startY, float dirX, float dir
 	t3 = -hitY / dirY;
 
 	float T = FLT_MAX;
-	if (t1 > 0) T = std::min(T, t1);
-	if (t2 > 0) T = std::min(T, t2);
-	if (t3 > 0) T = std::min(T, t3);
+	if (t1 > 0) T = (std::min)(T, t1);
+	if (t2 > 0) T = (std::min)(T, t2);
+	if (t3 > 0) T = (std::min)(T, t3);
 	float hitX2 = hitX + dirX * T;
 	float hitY2 = hitY + dirY * T;
 	backBuffer->Line(hitX, hitY, hitX2, hitY2, 0xFFFFFF);
@@ -110,7 +111,10 @@ void GameScene::DrawTrajectory(float startX, float startY, float dirX, float dir
 // -----------------------------------------------------------
 void GameScene::Init()
 {
-	printf("GameScene Init called\n");
+	// set background music
+	ma_sound_init_from_file(&engine, "assets/background.mp3", 0, NULL, NULL, &backgroundMusic);
+	ma_sound_set_looping(&backgroundMusic, MA_TRUE);
+
 	// reset
 	score = 0;
 	lives = 3;
@@ -132,6 +136,9 @@ void GameScene::Init()
 // -----------------------------------------------------------
 void GameScene::Shutdown()
 {
+	// stop background music
+	ma_sound_stop(&backgroundMusic);
+	ma_sound_uninit(&backgroundMusic);
 	// clean up back buffer surface
 	delete backBuffer;
 }
@@ -141,6 +148,12 @@ void GameScene::Shutdown()
 // -----------------------------------------------------------
 void GameScene::Tick(float deltaTime)
 {
+	if (musicDelay > 0)
+	{
+		musicDelay -= deltaTime;
+		if (musicDelay <= 0)
+			ma_sound_start(&backgroundMusic);
+	}
 	screen->Clear(0); // clear the screen to black
 	backBuffer->Clear(0); // clear the back buffer to black
 	// calculate shake offset
@@ -150,7 +163,7 @@ void GameScene::Tick(float deltaTime)
 		// shake intensity determines the maximum offset in pixels, 
 		// we can use a random value between -shakeIntensity and +shakeIntensity for both x and y
 		// moreover we clamp the minimum value passed to rand to 1 to avoid modulo by zero when shakeIntensity is very low
-		int range = std::max(1, (int)(shakeIntensity * 2));
+		int range = (std::max)(1, (int)(shakeIntensity * 2));
 		shakeX = (rand() % range) - (int)shakeIntensity;
 		shakeY = (rand() % range) - (int)shakeIntensity;
 		shakeIntensity -= deltaTime * 0.005f;
@@ -226,6 +239,7 @@ void GameScene::Tick(float deltaTime)
 				balls[i].inPlay = false;
 				// When a ball is lost emit a white explosion particle effect at the ball's last position
 				particleSystem.Emit(20, lastX, ScreenHeight - 5, 1000.0f, 0xFFFFFF);
+				ma_engine_play_sound(&engine, "assets/collision.wav", NULL);
 			}
 		}
 		if (AllBallsLost())
@@ -244,6 +258,7 @@ void GameScene::Tick(float deltaTime)
 		}
 		break;
 	case GAMEOVER:
+		musicDelay = 2000.0f; // reset music delay for when player restarts the game
 		nextScene = targetScene; // automatically transition to next scene
 		break;
 	}

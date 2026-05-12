@@ -245,6 +245,7 @@
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="MenuScene.h" />
+    <ClInclude Include="miniaudio.h" />
     <ClInclude Include="paddle.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="Scene.h" />

@@ -22,6 +22,7 @@ void MenuScene::MouseDown(int button)
 	if (button == 1) // 1 = left mouse button
 	{
 		nextScene = targetScene;
+		ma_engine_play_sound(&engine, "assets/start.mp3", NULL);
 	}
 }
 
