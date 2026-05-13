@@ -46,7 +46,7 @@ including the edge case where dx is 0.
 
 ### AABB Collision Detection
 Brick collisions use Axis-Aligned Bounding Box detection. To determine which side 
-was hit, the overlap on each axis is calculated — for example 
+was hit, the overlap on each axis is calculated, for example 
 `overlapX = min(ballRight - brickLeft, brickRight - ballLeft)`. The smaller overlap 
 indicates the axis of least penetration, which is the side the ball entered from. 
 This prevents incorrect bounces on corner hits.
@@ -70,8 +70,15 @@ Two functions were added to the Tmpl8 `Surface` class:
 - `Circle(x, y, radius, color)` draws a filled circle using the optimised 
   distance-squared check `(dx*dx + dy*dy <= r*r)`, avoiding the costly `sqrt` 
   operation
-- `ScalePixelColor(pixel, weight)` — scales each RGB channel independently by a 
+- `ScalePixelColor(pixel, weight)` scales each RGB channel independently by a 
   float weight, used for fading particles over their lifetime
+  
 ## Dependencies
 - SDL2 2.0.3
 - miniaudio (single header, included)
+
+## Credits:
+- Audio files are all sourced from Pixabay.com
+- Credits to https://pixabay.com/users/freesound_community-46691455/ for the background music and bounce sfx
+- Credits to https://pixabay.com/users/u_xmiiqyhi46-47475901/ for the starting sfx
+- Credits to https://pixabay.com/users/u_b32baquv5u-50250111/ for the brick break sfx
