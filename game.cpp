@@ -11,6 +11,7 @@ namespace Tmpl8 {
 	MenuScene menuScene;
 	GameScene gameScene;
 	GameOverScene gameOverScene;
+	bool engineInitialized = false;
 
 	// -----------------------------------------------------------
 	// Handle mouse input
@@ -33,7 +34,8 @@ namespace Tmpl8 {
 	// -----------------------------------------------------------
 	void Game::Init()
 	{
-		ma_engine_init(NULL, &engine);
+		if (ma_engine_init(NULL, &engine) == MA_SUCCESS)
+			engineInitialized = true;
 		ma_engine_set_volume(&engine, 0.3f); // 0.0 to 1.0
 		menuScene.SetTargetScene(&gameScene);
 		gameScene.SetTargetScene(&gameOverScene);
@@ -48,8 +50,12 @@ namespace Tmpl8 {
 	// -----------------------------------------------------------
 	void Game::Shutdown()
 	{
-		ma_engine_uninit(&engine);
 		currentScene->Shutdown();
+		if (engineInitialized)
+		{
+			ma_engine_uninit(&engine);
+			engineInitialized = false;
+		}
 	}
 		
 	// -----------------------------------------------------------

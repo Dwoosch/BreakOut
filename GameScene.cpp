@@ -200,7 +200,7 @@ void GameScene::Tick(float deltaTime)
 	switch (currentState)
 	{
 	case AIMING:
-		backBuffer->Centre("Click to Aim", ScreenHeight / 2, 0xFFFFFF);
+		backBuffer->Centre("Click to Fire", ScreenHeight / 2, 0xFFFFFF);
 		HandleAimingState();
 		break;
 	case PLAYING:
