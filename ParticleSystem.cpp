@@ -1,5 +1,10 @@
 #include "ParticleSystem.h"
 
+ParticleSystem::ParticleSystem()
+{
+	particles.resize(100);
+}
+
 void ParticleSystem::Emit(int count, float x, float y, float lifetime, Tmpl8::Pixel color)
 {
 	// emit 'count' particles at the specified position with random velocities and the given lifetime and color

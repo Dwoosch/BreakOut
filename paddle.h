@@ -3,17 +3,13 @@
 class Paddle
 {
 public:
-	int x;
-	const int y;
-	int width;
-	const int height;
+	int width = 128;
+	int x = 400 - width / 2;
+	const int y = 475;
+	const int height = 15;
 	
+	Paddle() = default;
+
 	void Move(int mouseX);
 	void Draw(Tmpl8::Surface* surface);
-
-	Paddle() : y(475), height(15)
-	{
-		width = 128; // set the paddle's initial width
-		x = 400 - width / 2;
-	}
 };

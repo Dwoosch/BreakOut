@@ -34,7 +34,7 @@ Surface::Surface( int a_Width, int a_Height ) :
 	m_Buffer = static_cast<Pixel*>(MALLOC64( (unsigned int)a_Width * (unsigned int)a_Height * sizeof( Pixel )));
 }
 
-Surface::Surface( char* a_File )
+Surface::Surface( const char* a_File )
 {
 	FILE* f = fopen( a_File, "rb" );
 	if (!f) 
@@ -48,7 +48,7 @@ Surface::Surface( char* a_File )
 	LoadImage( a_File );
 }
 
-void Surface::LoadImage( char* a_File )
+void Surface::LoadImage( const char* a_File )
 {
 	FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 	fif = FreeImage_GetFileType( a_File, 0 );
@@ -90,13 +90,13 @@ void Surface::Clear( Pixel a_Color )
 	for ( int i = 0; i < s; i++ ) m_Buffer[i] = a_Color;
 }
 
-void Surface::Centre( char* a_String, int y1, Pixel color )
+void Surface::Centre( const char* a_String, int y1, Pixel color )
 {
 	int x = (m_Width - (int)strlen( a_String ) * 6) / 2;
 	Print( a_String, x, y1, color );
 }
 
-void Surface::Print( char* a_String, int x1, int y1, Pixel color )
+void Surface::Print( const char* a_String, int x1, int y1, Pixel color )
 {
 	if (!fontInitialized) 
 	{
@@ -280,7 +280,7 @@ void Surface::BlendCopyTo( Surface* a_Dst, int a_X, int a_Y )
 	}
 }
 
-void Surface::SetChar( int c, char* c1, char* c2, char* c3, char* c4, char* c5 )
+void Surface::SetChar( int c, const char* c1, const char* c2, const char* c3, const char* c4, const char* c5 )
 {
 	strcpy( s_Font[c][0], c1 );
 	strcpy( s_Font[c][1], c2 );

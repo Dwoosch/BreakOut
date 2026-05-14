@@ -26,6 +26,6 @@ public:
 	}
 
 private:
-	const float velocity = 5.0f; // set the ball's velocity
+	static constexpr float velocity = 5.0f; // set the ball's velocity
 };
 

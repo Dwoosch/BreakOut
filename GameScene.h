@@ -5,8 +5,10 @@
 class GameScene : public Scene
 {
 public:
+	~GameScene() override;
 	void Init() override;
-	void Tick(float deltaTime) override;
+	std::unique_ptr<Scene> Tick(float deltaTime) override;
+	void Draw(Tmpl8::Surface* screen) override;
 	void Shutdown() override;
 	void MouseDown(int button) override;
 	void MouseMove(int x, int y) override {/* implement if you want to detect mouse movement */ }
@@ -27,5 +29,10 @@ public:
 	void HandlePaddleCollision();
 	void ActivateMultiBallPowerup(float sourceDx, float sourceDy, float sourceX, float sourceY);
 	void ActivateWidePaddlePowerup();
+
+private:
+	int shakeX = 0;
+    int shakeY = 0;
+	Tmpl8::Surface* backBuffer = nullptr;
 };
 

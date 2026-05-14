@@ -1,9 +1,9 @@
 #include "MenuScene.h"
-#include "ball.h"
-#include <array>
-#include "template.h"
 
-std::array<Ball, 6> menuBalls;
+#include "GameScene.h"
+#include "GameState.h"
+#include "miniaudio.h"
+#include "template.h"
 
 // -----------------------------------------------------------
 // Handle absolute mouse movement
@@ -21,7 +21,7 @@ void MenuScene::MouseDown(int button)
 {
 	if (button == 1) // 1 = left mouse button
 	{
-		nextScene = targetScene;
+		mouseClicked = true;
 		ma_engine_play_sound(&engine, "assets/start.mp3", NULL);
 	}
 }
@@ -50,7 +50,15 @@ void MenuScene::Shutdown()
 // -----------------------------------------------------------
 //	Tick function for the menu scene
 // -----------------------------------------------------------
-void MenuScene::Tick(float deltaTime)
+std::unique_ptr<Scene> MenuScene::Tick(float deltaTime)
+{
+	if (mouseClicked)
+		return std::make_unique<GameScene>();
+
+	return nullptr;
+}
+
+void MenuScene::Draw(Tmpl8::Surface* screen)
 {
 	// clear the screen with a solid color
 	screen->Clear(0);
@@ -58,7 +66,7 @@ void MenuScene::Tick(float deltaTime)
 	screen->Print("Welcome to Breakout!", 350, 150, 0xFFFFFF);
 	screen->Print("Click to Start", 350, 200, 0xFFFFFF);
 
-	for (int i = 0; i < 6; i++)
+    for (int i = 0; i < 6; i++)
 	{
 		menuBalls[i].Move(true);
 		menuBalls[i].Draw(screen);
