@@ -1,5 +1,4 @@
 #include "GameScene.h"
-#include "GameState.h"
 
 // -----------------------------------------------------------
 // Check if all bricks are destroyed

@@ -1,5 +1,4 @@
 #include "GameScene.h"
-#include "GameState.h"
 #include <SDL_stdinc.h>
 
 // -----------------------------------------------------------
