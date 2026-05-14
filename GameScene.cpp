@@ -12,13 +12,14 @@
 #include <array>
 #include <cstdlib>
 
+#include "GameOverScene.h"
+
 GameState currentState = AIMING;
 float widePaddleTimer = 0.0f;
 bool widePaddleActive = false;
 int lives = 3;
 int score = 0;
 float shakeIntensity = 0.0f;
-Tmpl8::Surface* backBuffer;
 ma_sound backgroundMusic;
 float musicDelay = 2000.0f;
 
@@ -32,16 +33,16 @@ ParticleSystem particleSystem;
 // -----------------------------------------------------------
 void GameScene::MouseMoveAbsolute(int x, int y)
 {
-	mouseX = x;
-	mouseY = y;
+    mouseX = x;
+    mouseY = y;
 }
 
 void GameScene::MouseDown(int button)
 {
-	if (button == 1 && currentState == AIMING) // 1 = left mouse button
-	{
-		currentState = PLAYING;
-	}
+    if (button == 1 && currentState == AIMING) // 1 = left mouse button
+    {
+        currentState = PLAYING;
+    }
 }
 
 // -----------------------------------------------------------
@@ -49,24 +50,24 @@ void GameScene::MouseDown(int button)
 // -----------------------------------------------------------
 void GameScene::HandleAimingState()
 {
-	balls[0].x = paddle.x + paddle.width / 2;
-	balls[0].y = paddle.y - 10;
+    balls[0].x = paddle.x + paddle.width / 2;
+    balls[0].y = paddle.y - 10;
 
-	if (mouseY < paddle.y)
-	{
-		float dirX = mouseX - balls[0].x;
-		float dirY = mouseY - balls[0].y;
+    if (mouseY < paddle.y)
+    {
+        float dirX = mouseX - balls[0].x;
+        float dirY = mouseY - balls[0].y;
 
-		float length = sqrt(dirX * dirX + dirY * dirY);
-		dirX /= length;
-		dirY /= length;
+        float length = sqrt(dirX * dirX + dirY * dirY);
+        dirX /= length;
+        dirY /= length;
 
-		balls[0].dx = dirX * balls[0].GetVelocity();
-		balls[0].dy = dirY * balls[0].GetVelocity();
+        balls[0].dx = dirX * balls[0].GetVelocity();
+        balls[0].dy = dirY * balls[0].GetVelocity();
 
-		// draw aiming line
-		DrawTrajectory(balls[0].x, balls[0].y, dirX, dirY);
-	}
+        // draw aiming line
+        DrawTrajectory(balls[0].x, balls[0].y, dirX, dirY);
+    }
 }
 
 // -----------------------------------------------------------
@@ -74,36 +75,42 @@ void GameScene::HandleAimingState()
 // -----------------------------------------------------------
 void GameScene::DrawTrajectory(float startX, float startY, float dirX, float dirY)
 {
-	// calculate intersection with walls
-	float t1 = (ScreenWidth - startX) / dirX;
-	float t2 = -startX / dirX;
-	float t3 = -startY / dirY;
+    // calculate intersection with walls
+    float t1 = (ScreenWidth - startX) / dirX;
+    float t2 = -startX / dirX;
+    float t3 = -startY / dirY;
 
-	// find the smallest positive t to determine which wall is hit first
-	float t = FLT_MAX;
-	if (t1 > 0) t = (std::min)(t, t1);
-	if (t2 > 0) t = (std::min)(t, t2);
-	if (t3 > 0) t = (std::min)(t, t3);
+    // find the smallest positive t to determine which wall is hit first
+    float t = FLT_MAX;
+    if (t1 > 0) t = (std::min)(t, t1);
+    if (t2 > 0) t = (std::min)(t, t2);
+    if (t3 > 0) t = (std::min)(t, t3);
 
-	// calculate the hit point
-	float hitX = startX + dirX * t;
-	float hitY = startY + dirY * t;
-	backBuffer->Line(startX, startY, hitX, hitY, 0xFFFFFF);
+    // calculate the hit point
+    float hitX = startX + dirX * t;
+    float hitY = startY + dirY * t;
+    backBuffer->Line(startX, startY, hitX, hitY, 0xFFFFFF);
 
-	if (t == t1 || t == t2) dirX = -dirX; // hit left or right wall
-	if (t == t3) dirY = -dirY; // hit top wall
+    if (t == t1 || t == t2) dirX = -dirX; // hit left or right wall
+    if (t == t3) dirY = -dirY; // hit top wall
 
-	t1 = (ScreenWidth - hitX) / dirX;
-	t2 = -hitX / dirX;
-	t3 = -hitY / dirY;
+    t1 = (ScreenWidth - hitX) / dirX;
+    t2 = -hitX / dirX;
+    t3 = -hitY / dirY;
 
-	float T = FLT_MAX;
-	if (t1 > 0) T = (std::min)(T, t1);
-	if (t2 > 0) T = (std::min)(T, t2);
-	if (t3 > 0) T = (std::min)(T, t3);
-	float hitX2 = hitX + dirX * T;
-	float hitY2 = hitY + dirY * T;
-	backBuffer->Line(hitX, hitY, hitX2, hitY2, 0xFFFFFF);
+    float T = FLT_MAX;
+    if (t1 > 0) T = (std::min)(T, t1);
+    if (t2 > 0) T = (std::min)(T, t2);
+    if (t3 > 0) T = (std::min)(T, t3);
+    float hitX2 = hitX + dirX * T;
+    float hitY2 = hitY + dirY * T;
+    backBuffer->Line(hitX, hitY, hitX2, hitY2, 0xFFFFFF);
+}
+
+GameScene::~GameScene()
+{
+    delete backBuffer;
+    backBuffer = nullptr;
 }
 
 // -----------------------------------------------------------
@@ -111,24 +118,24 @@ void GameScene::DrawTrajectory(float startX, float startY, float dirX, float dir
 // -----------------------------------------------------------
 void GameScene::Init()
 {
-	// set background music
-	ma_sound_init_from_file(&engine, "assets/background.mp3", 0, NULL, NULL, &backgroundMusic);
-	ma_sound_set_looping(&backgroundMusic, MA_TRUE);
+    // set background music
+    ma_sound_init_from_file(&engine, "assets/background.mp3", 0, NULL, NULL, &backgroundMusic);
+    ma_sound_set_looping(&backgroundMusic, MA_TRUE);
 
-	// reset
-	score = 0;
-	lives = 3;
-	currentState = AIMING;
-	shakeIntensity = 0.0f;
-	widePaddleActive = false;
-	widePaddleTimer = 0.0f;
-	// create a back buffer surface for screen shake effect
-	backBuffer = new Tmpl8::Surface(ScreenWidth, ScreenHeight);
-	// initialize the font for drawing text
-	backBuffer->InitCharset();
-	// set the first ball to be in play and reset the grid to initialize bricks and powerups
-	balls[0].inPlay = true;
-	ResetGrid();
+    // reset
+    score = 0;
+    lives = 3;
+    currentState = AIMING;
+    shakeIntensity = 0.0f;
+    widePaddleActive = false;
+    widePaddleTimer = 0.0f;
+    // create a back buffer surface for screen shake effect
+    backBuffer = new Tmpl8::Surface(ScreenWidth, ScreenHeight);
+    // initialize the font for drawing text
+    backBuffer->InitCharset();
+    // set the first ball to be in play and reset the grid to initialize bricks and powerups
+    balls[0].inPlay = true;
+    ResetGrid();
 }
 
 // -----------------------------------------------------------
@@ -136,135 +143,145 @@ void GameScene::Init()
 // -----------------------------------------------------------
 void GameScene::Shutdown()
 {
-	// stop background music
-	ma_sound_stop(&backgroundMusic);
-	ma_sound_uninit(&backgroundMusic);
-	// clean up back buffer surface
-	delete backBuffer;
+    // stop background music
+    ma_sound_stop(&backgroundMusic);
+    ma_sound_uninit(&backgroundMusic);
+    // clean up back buffer surface
+    delete backBuffer;
+    backBuffer = nullptr;
 }
 
 // -----------------------------------------------------------
 // Main application tick function
 // -----------------------------------------------------------
-void GameScene::Tick(float deltaTime)
+std::unique_ptr<Scene> GameScene::Tick(float deltaTime)
 {
-	if (musicDelay > 0)
-	{
-		musicDelay -= deltaTime;
-		if (musicDelay <= 0)
-			ma_sound_start(&backgroundMusic);
-	}
-	screen->Clear(0); // clear the screen to black
-	backBuffer->Clear(0); // clear the back buffer to black
-	// calculate shake offset
-	int shakeX = 0, shakeY = 0;
-	if (shakeIntensity > 0)
-	{
-		// shake intensity determines the maximum offset in pixels, 
-		// we can use a random value between -shakeIntensity and +shakeIntensity for both x and y
-		// moreover we clamp the minimum value passed to rand to 1 to avoid modulo by zero when shakeIntensity is very low
-		int range = (std::max)(1, (int)(shakeIntensity * 2));
-		shakeX = (rand() % range) - (int)shakeIntensity;
-		shakeY = (rand() % range) - (int)shakeIntensity;
-		shakeIntensity -= deltaTime * 0.005f;
-		if (shakeIntensity < 0)
-			shakeIntensity = 0;
-	}
+    std::unique_ptr<Scene> nextScene;
 
-	char buffer[32];
-	sprintf(buffer, "Score: %d", score);
-	backBuffer->Print(buffer, 10, 10, 0xFFFFFF);
-	sprintf(buffer, "Lives: %d", lives);
-	backBuffer->Print(buffer, 750, 10, 0xFFFFFF);
-	paddle.Draw(backBuffer);
-	for (int i = 0; i < MAX_BALLS; i++)
-	{
-		if (balls[i].inPlay)
-		{
-			balls[i].Draw(backBuffer);
-		}
-	}
+    if (musicDelay > 0)
+    {
+        musicDelay -= deltaTime;
+        if (musicDelay <= 0)
+            ma_sound_start(&backgroundMusic);
+    }
+    // calculate shake offset
+    if (shakeIntensity > 0)
+    {
+        // shake intensity determines the maximum offset in pixels, 
+        // we can use a random value between -shakeIntensity and +shakeIntensity for both x and y
+        // moreover we clamp the minimum value passed to rand to 1 to avoid modulo by zero when shakeIntensity is very low
+        int range = (std::max)(1, (int)(shakeIntensity * 2));
+        shakeX = (rand() % range) - (int)shakeIntensity;
+        shakeY = (rand() % range) - (int)shakeIntensity;
+        shakeIntensity -= deltaTime * 0.005f;
+        if (shakeIntensity < 0)
+            shakeIntensity = 0;
+    }
 
-	for (int i = 0; i < BRICK_ROWS; i++)
-	{
-		for (int j = 0; j < BRICK_COLUMNS; j++)
-		{
-			bricks[i][j].Draw(backBuffer,
-				OFFSET_X + j * (Brick::BRICK_WIDTH + GAP),
-				i * (Brick::BRICK_HEIGHT + GAP));
-		}
-	}
-	particleSystem.Update(deltaTime);
-	particleSystem.Draw(backBuffer);
+    particleSystem.Update(deltaTime);
 
-	switch (currentState)
-	{
-	case AIMING:
-		backBuffer->Centre("Click to Fire", ScreenHeight / 2, 0xFFFFFF);
-		HandleAimingState();
-		break;
-	case PLAYING:
-		paddle.Move(mouseX);
+    switch (currentState)
+    {
+    case AIMING:
+        backBuffer->Centre("Click to Fire", ScreenHeight / 2, 0xFFFFFF);
+        HandleAimingState();
+        break;
+    case PLAYING:
+        paddle.Move(mouseX);
 
-		if (widePaddleActive)
-		{
-			widePaddleTimer -= deltaTime;
-			if (widePaddleTimer <= 0)
-			{
-				paddle.width = 128; // reset to original width
-				widePaddleActive = false;
-			}
-		}
+        if (widePaddleActive)
+        {
+            widePaddleTimer -= deltaTime;
+            if (widePaddleTimer <= 0)
+            {
+                paddle.width = 128; // reset to original width
+                widePaddleActive = false;
+            }
+        }
 
-		for (int i = 0; i < MAX_BALLS; i++)
-		{
-			if (balls[i].inPlay)
-			{
-				balls[i].Move(false);
-			}
-		}
+        for (int i = 0; i < MAX_BALLS; i++)
+        {
+            if (balls[i].inPlay)
+            {
+                balls[i].Move(false);
+            }
+        }
 
-		HandleBrickCollisions();
-		if (currentState != PLAYING)
-			break;
-		HandlePaddleCollision();
+        HandleBrickCollisions();
+        if (currentState != PLAYING)
+            break;
+        HandlePaddleCollision();
 
-		// Check if the ball has fallen below the screen
-		for (int i = 0; i < MAX_BALLS; i++)
-		{
-			if (balls[i].inPlay && balls[i].y > ScreenHeight)
-			{
-				float lastX = balls[i].x;
-				float lastY = balls[i].y;
-				balls[i].inPlay = false;
-				// When a ball is lost emit a white explosion particle effect at the ball's last position
-				particleSystem.Emit(20, lastX, ScreenHeight - 5, 1000.0f, 0xFFFFFF);
-				ma_engine_play_sound(&engine, "assets/collision.wav", NULL);
-			}
-		}
-		if (AllBallsLost())
-		{
-			lives--;
-			if (lives > 0)
-			{
-				shakeIntensity = 5.0f; // set shake intensity for screen shake effect
-				ResetBalls();
-				currentState = AIMING;
-			}
-			else
-			{
-				currentState = GAMEOVER;
-			}
-		}
-		break;
-	case GAMEOVER:
-		musicDelay = 2000.0f; // reset music delay for when player restarts the game
-		nextScene = targetScene; // automatically transition to next scene
-		break;
-	}
+        // Check if the ball has fallen below the screen
+        for (int i = 0; i < MAX_BALLS; i++)
+        {
+            if (balls[i].inPlay && balls[i].y > ScreenHeight)
+            {
+                float lastX = balls[i].x;
+                float lastY = balls[i].y;
+                balls[i].inPlay = false;
+                // When a ball is lost emit a white explosion particle effect at the ball's last position
+                particleSystem.Emit(20, lastX, ScreenHeight - 5, 1000.0f, 0xFFFFFF);
+                ma_engine_play_sound(&engine, "assets/collision.wav", NULL);
+            }
+        }
+        if (AllBallsLost())
+        {
+            lives--;
+            if (lives > 0)
+            {
+                shakeIntensity = 5.0f; // set shake intensity for screen shake effect
+                ResetBalls();
+                currentState = AIMING;
+            }
+            else
+            {
+                currentState = GAMEOVER;
+            }
+        }
+        break;
+    case GAMEOVER:
+        nextScene = std::make_unique<GameOverScene>();
+        musicDelay = 2000.0f; // reset music delay for when player restarts the game
+        break;
+    }
 
-	// copy backbuffer to screen with shake offset
-	// CopyTo handles bounds internally 
-	// so we don't need to worry about negative offsets or offsets that go beyond the screen dimensions
-	backBuffer->CopyTo(screen, shakeX, shakeY);
+    return nextScene;
+}
+
+void GameScene::Draw(Tmpl8::Surface* screen)
+{
+    screen->Clear(0); // clear the screen to black
+    backBuffer->Clear(0); // clear the back buffer to black
+
+    char buffer[32];
+    sprintf(buffer, "Score: %d", score);
+    backBuffer->Print(buffer, 10, 10, 0xFFFFFF);
+    sprintf(buffer, "Lives: %d", lives);
+    backBuffer->Print(buffer, 750, 10, 0xFFFFFF);
+    paddle.Draw(backBuffer);
+    for (int i = 0; i < MAX_BALLS; i++)
+    {
+        if (balls[i].inPlay)
+        {
+            balls[i].Draw(backBuffer);
+        }
+    }
+
+    for (int i = 0; i < BRICK_ROWS; i++)
+    {
+        for (int j = 0; j < BRICK_COLUMNS; j++)
+        {
+            bricks[i][j].Draw(backBuffer,
+                OFFSET_X + j * (Brick::BRICK_WIDTH + GAP),
+                i * (Brick::BRICK_HEIGHT + GAP));
+        }
+    }
+
+    particleSystem.Draw(backBuffer);
+    // copy backbuffer to screen with shake offset
+    // CopyTo handles bounds internally 
+    // so we don't need to worry about negative offsets or offsets that go beyond the screen dimensions
+    backBuffer->CopyTo(screen, shakeX, shakeY);
+
 }

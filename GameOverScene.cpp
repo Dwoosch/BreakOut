@@ -1,6 +1,8 @@
 #include "GameOverScene.h"
 #include <cstdio>
 
+#include "MenuScene.h"
+
 
 // -----------------------------------------------------------
 // Handle absolute mouse movement
@@ -18,7 +20,7 @@ void GameOverScene::MouseDown(int button)
 {
 	if (button == 1) // 1 = left mouse button
 	{
-		nextScene = targetScene;
+		mouseClicked = true;
 	}
 }
 
@@ -39,7 +41,15 @@ void GameOverScene::Shutdown()
 // -----------------------------------------------------------
 //	Tick function for the game over scene
 // -----------------------------------------------------------
-void GameOverScene::Tick(float deltaTime)
+std::unique_ptr<Scene> GameOverScene::Tick(float deltaTime)
+{
+	if (mouseClicked)
+		return std::make_unique<MenuScene>();
+
+	return nullptr;
+}
+
+void GameOverScene::Draw(Tmpl8::Surface* screen)
 {
 	screen->Clear(0);
 	screen->Print("Game Over", 350, 150, 0xFFFFFF);

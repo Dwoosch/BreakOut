@@ -1,4 +1,6 @@
 #pragma once
+#include <memory>
+
 #include "Scene.h"
 
 namespace Tmpl8 {
@@ -17,11 +19,10 @@ namespace Tmpl8 {
         void MouseMoveAbsolute(int x, int y);
         void KeyUp(int key) {}
         void KeyDown(int key) {}
-        Scene* currentScene;
 
     private:
         Surface* screen;
-		Scene* nextScene;
+        std::unique_ptr<Scene> currentScene;
     };
 
 }; // namespace Tmpl8

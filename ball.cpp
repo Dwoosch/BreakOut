@@ -1,5 +1,6 @@
 #include "ball.h"
 #include "GameState.h"
+#include "template.h"
 
 void Ball::Move(bool bounceBottom) 
 {
@@ -7,13 +8,15 @@ void Ball::Move(bool bounceBottom)
 	y += dy;
 
 	// bounce off the walls
-	if (x < 0 || x > 800)
+	if (x < 0 || x > ScreenWidth)
 	{
 		dx = -dx;
+		x = x < 0 ? 0 : ScreenWidth - 1;
 		ma_engine_play_sound(&engine, "assets/ballbounce.mp3", NULL);
 	}
-	if (y < 0 || (bounceBottom && y > 512))
+	if (y < 0 || (bounceBottom && y > ScreenHeight))
 	{
+		y = y < 0 ? 0 : ScreenHeight - 1;
 		dy = -dy;
 	}
 }

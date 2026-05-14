@@ -4,9 +4,11 @@
 #include "brick.h"
 #include "ParticleSystem.h"
 #include "surface.h"
-#include <array>
 #include "template.h"
+
 #include "miniaudio.h"
+
+#include <array>
 
 extern ma_engine engine;
 extern ma_sound backgroundMusic;
