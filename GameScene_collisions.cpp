@@ -1,6 +1,5 @@
 #include "GameScene.h"
 #include <SDL_stdinc.h>
-#include "GameState.h"
 
 // -----------------------------------------------------------
 // Handling collisions with bricks
@@ -9,7 +8,7 @@ void GameScene::HandleBrickCollisions()
 {
 	for (int i = 0; i < MAX_BALLS; i++)
 	{
-		if (!balls[i].inPlay)
+		if (!balls[i].IsInPlay())
 			continue;
 
 		bool hit = false;
@@ -17,27 +16,30 @@ void GameScene::HandleBrickCollisions()
 		{
 			for (int col = 0; col < BRICK_COLUMNS && !hit; col++)
 			{
-				if (bricks[row][col].destroyed)
+				if (bricks[row][col].IsDestroyed())
 					continue;
 
-				int brickX = OFFSET_X + col * (Brick::BRICK_WIDTH + GAP);
-				int brickY = row * (Brick::BRICK_HEIGHT + GAP);
-				if (!CheckCollision2D(balls[i].x - 5, balls[i].y - 5, 10, 10, brickX, brickY, Brick::BRICK_WIDTH, Brick::BRICK_HEIGHT))
+				int brickWidth = bricks[row][col].BRICK_WIDTH;
+				int brickHeight = bricks[row][col].BRICK_HEIGHT;
+
+				int brickX = OFFSET_X + col * (brickWidth + GAP);
+				int brickY = row * (brickHeight + GAP);
+				if (!CheckCollision2D(balls[i].GetX() - 5, balls[i].GetY() - 5, 10, 10, brickX, brickY, brickWidth, brickHeight))
 					continue;
 
-				HandlePowerup(bricks[row][col].GetPowerupType(), balls[i].dx, balls[i].dy, balls[i].x, balls[i].y);
-				bricks[row][col].destroyed = true;
+				HandlePowerup(bricks[row][col].GetPowerupType(), balls[i].GetDX(), balls[i].GetDY(), balls[i].GetX(), balls[i].GetY());
+				bricks[row][col].SetDestroyed(true);
 				shakeIntensity = 5.0f; // set shake intensity for screen shake effect
-				ma_engine_play_sound(&engine, "assets/collision.wav", NULL);
-				particleSystem.Emit(20, balls[i].x, balls[i].y, 1000.0f, bricks[row][col].GetColor());
+				Audio::Play("assets/collision.wav");
+				particleSystem.Emit(20, balls[i].GetX(), balls[i].GetY(), 1000.0f, bricks[row][col].GetColor());
 				score += 100;
-				int ballLeft = balls[i].x - 5;
-				int ballRight = balls[i].x + 5;
-				int ballTop = balls[i].y - 5;
-				int ballBottom = balls[i].y + 5;
+				int ballLeft = balls[i].GetX() - 5;
+				int ballRight = balls[i].GetX() + 5;
+				int ballTop = balls[i].GetY() - 5;
+				int ballBottom = balls[i].GetY() + 5;
 
-				int brickRight = brickX + Brick::BRICK_WIDTH;
-				int brickBottom = brickY + Brick::BRICK_HEIGHT;
+				int brickRight = brickX + brickWidth;
+				int brickBottom = brickY + brickHeight;
 
 				// calculate overlap on both axes
 				int overlapX = (std::min)(ballRight - brickX, brickRight - ballLeft);
@@ -46,11 +48,11 @@ void GameScene::HandleBrickCollisions()
 				// determine collision side based on smaller overlap
 				if (overlapX < overlapY)
 				{
-					balls[i].dx = -balls[i].dx; // reverse horizontal direction
+					balls[i].SetDX(-balls[i].GetDX()); // reverse horizontal direction
 				}
 				else
 				{
-					balls[i].dy = -balls[i].dy; // reverse vertical direction
+					balls[i].SetDY(-balls[i].GetDY()); // reverse vertical direction
 				}
 				if (AllBricksDestroyed())
 				{
@@ -70,22 +72,24 @@ void GameScene::HandlePaddleCollision()
 {
 	for (int i = 0; i < MAX_BALLS; i++)
 	{
-		if (balls[i].inPlay)
+		if (balls[i].IsInPlay())
 		{
-			if (GameScene::CheckCollision2D(balls[i].x - 5, balls[i].y - 5, 10, 10, paddle.x, paddle.y, paddle.width, paddle.height))
+			if (GameScene::CheckCollision2D(balls[i].GetX() - 5, balls[i].GetY() - 5, 10, 10,
+				paddle.GetXPosition(), paddle.GetYPosition(),
+				paddle.GetWidth(), paddle.GetHeight()))
 			{
 				// hit position normalized to range [-1, 1]
-				float hitPos = (balls[i].x - (paddle.x + paddle.width / 2)) / ((float)paddle.width / 2);
+				float hitPos = (balls[i].GetX() - (paddle.GetXPosition() + paddle.GetWidth() / 2)) / ((float)paddle.GetWidth() / 2);
 				// convert degrees to radians for the maximum angle
 				float maxAngle = 60 * (M_PI / 180);
 				float angle = hitPos * maxAngle;
-				balls[i].dx = balls[i].GetVelocity() * sin(angle);
+				balls[i].SetDX(balls[i].GetVelocity() * sin(angle));
 				// ensure the ball always moves upwards after hitting the paddle
-				if (balls[i].dy > 0)
+				if (balls[i].GetDY() > 0)
 				{
-					balls[i].dy = -balls[i].GetVelocity() * cos(angle);
+					balls[i].SetDY(-balls[i].GetVelocity() * cos(angle));
 				}
-				ma_engine_play_sound(&engine, "assets/ballbounce.mp3", NULL);
+				Audio::Play("assets/ballbounce.mp3");
 			}
 		}
 	}

@@ -6,9 +6,6 @@ class Brick
 public:
 	static const int BRICK_WIDTH = 64;
 	static const int BRICK_HEIGHT = 32;
-
-	bool destroyed;
-
 	enum PowerupType { NONE, WIDE_PADDLE, MULTI_BALL };
 	enum Color { RED = 0xFF0000, BLUE = 0x0000FF, YELLOW = 0xFFFF00 };
 
@@ -16,14 +13,12 @@ public:
 	void SetPowerup(PowerupType type);
 	PowerupType GetPowerupType() const;
 	Tmpl8::Pixel GetColor() const;
+	bool IsDestroyed();
+	void SetDestroyed(bool value);
 
-	Brick()
-	{
-		destroyed = false; // set the brick's initial state to not destroyed
-		powerup = NONE; // set the brick's initial powerup type to none
-		color = RED; // set the brick's initial color to red
-	}
+	Brick() = default;
 private:
-	Tmpl8::Pixel color;
-	PowerupType powerup;
+	bool destroyed = false;
+	Tmpl8::Pixel color = RED;
+	PowerupType powerup = NONE;
 };

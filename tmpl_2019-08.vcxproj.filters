@@ -8,17 +8,40 @@
     <ClCompile Include="template.cpp">
       <Filter>template code</Filter>
     </ClCompile>
-    <ClCompile Include="ball.cpp" />
-    <ClCompile Include="paddle.cpp" />
-    <ClCompile Include="brick.cpp" />
-    <ClCompile Include="ParticleSystem.cpp" />
-    <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="GameScene.cpp" />
-    <ClCompile Include="GameScene_collisions.cpp" />
-    <ClCompile Include="GameScene_powerups.cpp" />
-    <ClCompile Include="GameScene_grid.cpp" />
-    <ClCompile Include="MenuScene.cpp" />
-    <ClCompile Include="GameOverScene.cpp" />
+    <ClCompile Include="Audio.cpp" />
+    <ClCompile Include="ball.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="brick.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="paddle.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleSystem.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="GameOverScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene_collisions.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene_grid.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene_powerups.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuScene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h" />
@@ -28,20 +51,42 @@
     <ClInclude Include="template.h">
       <Filter>template code</Filter>
     </ClInclude>
-    <ClInclude Include="ball.h" />
-    <ClInclude Include="paddle.h" />
-    <ClInclude Include="brick.h" />
-    <ClInclude Include="ParticleSystem.h" />
-    <ClInclude Include="Scene.h" />
-    <ClInclude Include="GameScene.h" />
-    <ClInclude Include="GameState.h" />
-    <ClInclude Include="MenuScene.h" />
-    <ClInclude Include="GameOverScene.h" />
     <ClInclude Include="miniaudio.h" />
+    <ClInclude Include="Audio.h" />
+    <ClInclude Include="ball.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="brick.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleSystem.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="paddle.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="GameOverScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuScene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="template code">
       <UniqueIdentifier>{bf32dd6e-4be7-4889-8ac6-49e7ee163c40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Objects">
+      <UniqueIdentifier>{a3313c13-4e76-4ce2-a434-2574ca7a1b0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes">
+      <UniqueIdentifier>{fdf71bfc-7b52-4d06-9251-e0ad4dcbc3eb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

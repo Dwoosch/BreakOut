@@ -12,3 +12,26 @@ void Paddle::Draw(Tmpl8::Surface* surface)
 {
 	surface->Bar(x, y, x + width - 1, y + height - 1, 0x00FF00); // draw the paddle as a green bar
 }
+
+int Paddle::GetWidth()
+{
+	return width;
+}
+
+void Paddle::SetWidth(int newWidth)
+{
+	width = newWidth;
+}
+
+int Paddle::GetYPosition() {
+	return y;
+}
+
+int Paddle::GetXPosition() {
+	return x;
+}
+
+int Paddle::GetHeight()
+{
+	return height;
+}

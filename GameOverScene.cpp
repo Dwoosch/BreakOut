@@ -54,7 +54,7 @@ void GameOverScene::Draw(Tmpl8::Surface* screen)
 	screen->Clear(0);
 	screen->Print("Game Over", 350, 150, 0xFFFFFF);
 	char buffer[32];
-	sprintf(buffer, "Final Score: %d", score);
+	sprintf(buffer, "Final Score: %d", finalScore);
 	screen->Print(buffer, 350, 200, 0xFFFFFF);
 	screen->Print("Click to Restart", 350, 250, 0xFFFFFF);
 }

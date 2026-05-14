@@ -11,7 +11,7 @@ bool GameScene::AllBricksDestroyed()
 	{
 		for (int j = 0; j < BRICK_COLUMNS; j++)
 		{
-			if (!bricks[i][j].destroyed)
+			if (!bricks[i][j].IsDestroyed())
 			{
 				return false;
 			}
@@ -28,7 +28,7 @@ bool GameScene::AllBallsLost()
 	// loop through all balls and check if any are still in play
 	for (int i = 0; i < MAX_BALLS; i++)
 	{
-		if (balls[i].inPlay)
+		if (balls[i].IsInPlay())
 		{
 			return false;
 		}
@@ -49,7 +49,7 @@ void GameScene::ResetGrid()
 		for (int col = 0; col < BRICK_COLUMNS; col++)
 		{
 			int powerUpNumber = IRand(9);
-			bricks[row][col].destroyed = false;
+			bricks[row][col].SetDestroyed(false);
 			// 60% chance of no powerup
 			if (powerUpNumber < 6) bricks[row][col].SetPowerup(Brick::NONE);
 			// 20% chance of wide paddle
@@ -65,9 +65,9 @@ void GameScene::ResetGrid()
 // -----------------------------------------------------------
 void GameScene::ResetBalls()
 {
-	balls[0].inPlay = true;
+	balls[0].SetInPlay(true);
 	for (int i = 1; i < MAX_BALLS; i++)
 	{
-		balls[i].inPlay = false;
+		balls[i].SetInPlay(false);
 	}
 }

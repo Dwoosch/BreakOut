@@ -26,17 +26,17 @@ void GameScene::ActivateMultiBallPowerup(float sourceDx, float sourceDy, float s
 {
 	for (int i = 1; i < MAX_BALLS; i++)
 	{
-		if (!balls[i].inPlay)
+		if (!balls[i].IsInPlay())
 		{
-			balls[i].inPlay = true;
-			balls[i].x = sourceX;
-			balls[i].y = sourceY;
+			balls[i].SetInPlay(true);
+			balls[i].SetX(sourceX);
+			balls[i].SetY(sourceY);
 			// Diverge the new ball's direction by 15 degrees from the original ball's direction
 			float angle = 15 * (M_PI / 180); // convert degrees to radians
 			float newDx = sourceDx * cos(angle) - sourceDy * sin(angle);
 			float newDy = sourceDx * sin(angle) + sourceDy * cos(angle);
-			balls[i].dx = newDx;
-			balls[i].dy = newDy;
+			balls[i].SetDX(newDx);
+			balls[i].SetDY(newDy);
 			break; // only activate one additional ball
 		}
 	}
@@ -48,7 +48,7 @@ void GameScene::ActivateMultiBallPowerup(float sourceDx, float sourceDy, float s
 void GameScene::ActivateWidePaddlePowerup()
 {
 	// Increase paddle width by 50% for 10 seconds
-	paddle.width = (int)(128 * WIDE_PADDLE_MULTIPLIER); // 128 * 1.5
+	paddle.SetWidth((int)(128 * WIDE_PADDLE_MULTIPLIER)); // 128 * 1.5
 	widePaddleActive = true;
 	widePaddleTimer = 10000.0f; // reset timer to 10 seconds (10000 milliseconds)
 

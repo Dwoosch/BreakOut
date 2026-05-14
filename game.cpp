@@ -1,13 +1,9 @@
-#define MINIAUDIO_IMPLEMENTATION
-#include "miniaudio.h"	
 #include "game.h"
 #include "MenuScene.h"
 
-
-ma_engine engine;
-
 namespace Tmpl8 {
-	bool engineInitialized = false;
+
+	// Credits to Jeremiah van Oosten for helping me with the scene management! https://discord.gg/gsxxaxc
 
 	// -----------------------------------------------------------
 	// Handle mouse input
@@ -30,9 +26,8 @@ namespace Tmpl8 {
 	// -----------------------------------------------------------
 	void Game::Init()
 	{
-		if (ma_engine_init(NULL, &engine) == MA_SUCCESS)
-			engineInitialized = true;
-		ma_engine_set_volume(&engine, 0.3f); // 0.0 to 1.0
+		Audio::Init();
+		Audio::SetVolume(0.5f); // set global volume to 50%
 		currentScene = std::make_unique<MenuScene>();
 		currentScene->Init();
 	}
@@ -43,12 +38,6 @@ namespace Tmpl8 {
 	void Game::Shutdown()
 	{
 		currentScene->Shutdown();
-		if (engineInitialized)
-		{
-			ma_engine_uninit(&engine);
-			engineInitialized = false;
-		}
-
 	}
 		
 	// -----------------------------------------------------------

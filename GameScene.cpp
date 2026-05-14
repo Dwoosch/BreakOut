@@ -1,32 +1,12 @@
 #include "GameScene.h"
-#include "brick.h"
-#include "GameState.h"
-#include "template.h"
 #include "surface.h"
 #include <cstdio> //printf
-#include "ball.h"
-#include "paddle.h"
-#include "ParticleSystem.h"
 #include <cmath>
 #include <algorithm>
 #include <array>
 #include <cstdlib>
 
 #include "GameOverScene.h"
-
-GameState currentState = AIMING;
-float widePaddleTimer = 0.0f;
-bool widePaddleActive = false;
-int lives = 3;
-int score = 0;
-float shakeIntensity = 0.0f;
-ma_sound backgroundMusic;
-float musicDelay = 2000.0f;
-
-std::array<Ball, MAX_BALLS> balls;
-Paddle paddle;
-std::array<std::array<Brick, BRICK_COLUMNS>, BRICK_ROWS> bricks;
-ParticleSystem particleSystem;
 
 // -----------------------------------------------------------
 // Handle mouse input
@@ -50,23 +30,20 @@ void GameScene::MouseDown(int button)
 // -----------------------------------------------------------
 void GameScene::HandleAimingState()
 {
-    balls[0].x = paddle.x + paddle.width / 2;
-    balls[0].y = paddle.y - 10;
+    balls[0].SetX(paddle.GetXPosition() + paddle.GetWidth() / 2);
+    balls[0].SetY(paddle.GetYPosition() - 10);
 
-    if (mouseY < paddle.y)
+    if (mouseY < paddle.GetYPosition())
     {
-        float dirX = mouseX - balls[0].x;
-        float dirY = mouseY - balls[0].y;
+        float dirX = mouseX - balls[0].GetX();
+        float dirY = mouseY - balls[0].GetY();
 
         float length = sqrt(dirX * dirX + dirY * dirY);
         dirX /= length;
         dirY /= length;
 
-        balls[0].dx = dirX * balls[0].GetVelocity();
-        balls[0].dy = dirY * balls[0].GetVelocity();
-
-        // draw aiming line
-        DrawTrajectory(balls[0].x, balls[0].y, dirX, dirY);
+        balls[0].SetDX(dirX * balls[0].GetVelocity());
+        balls[0].SetDY(dirY * balls[0].GetVelocity());
     }
 }
 
@@ -118,10 +95,6 @@ GameScene::~GameScene()
 // -----------------------------------------------------------
 void GameScene::Init()
 {
-    // set background music
-    ma_sound_init_from_file(&engine, "assets/background.mp3", 0, NULL, NULL, &backgroundMusic);
-    ma_sound_set_looping(&backgroundMusic, MA_TRUE);
-
     // reset
     score = 0;
     lives = 3;
@@ -134,7 +107,7 @@ void GameScene::Init()
     // initialize the font for drawing text
     backBuffer->InitCharset();
     // set the first ball to be in play and reset the grid to initialize bricks and powerups
-    balls[0].inPlay = true;
+    balls[0].SetInPlay(true);
     ResetGrid();
 }
 
@@ -144,8 +117,7 @@ void GameScene::Init()
 void GameScene::Shutdown()
 {
     // stop background music
-    ma_sound_stop(&backgroundMusic);
-    ma_sound_uninit(&backgroundMusic);
+    Audio::StopSound(backgroundMusic);
     // clean up back buffer surface
     delete backBuffer;
     backBuffer = nullptr;
@@ -162,7 +134,7 @@ std::unique_ptr<Scene> GameScene::Tick(float deltaTime)
     {
         musicDelay -= deltaTime;
         if (musicDelay <= 0)
-            ma_sound_start(&backgroundMusic);
+            Audio::PlayLooping(backgroundMusic, "assets/background.mp3");
     }
     // calculate shake offset
     if (shakeIntensity > 0)
@@ -194,16 +166,16 @@ std::unique_ptr<Scene> GameScene::Tick(float deltaTime)
             widePaddleTimer -= deltaTime;
             if (widePaddleTimer <= 0)
             {
-                paddle.width = 128; // reset to original width
+                paddle.SetWidth(128); // reset to original width
                 widePaddleActive = false;
             }
         }
 
         for (int i = 0; i < MAX_BALLS; i++)
         {
-            if (balls[i].inPlay)
+            if (balls[i].IsInPlay())
             {
-                balls[i].Move(false);
+                balls[i].Move(false, deltaTime);
             }
         }
 
@@ -215,14 +187,14 @@ std::unique_ptr<Scene> GameScene::Tick(float deltaTime)
         // Check if the ball has fallen below the screen
         for (int i = 0; i < MAX_BALLS; i++)
         {
-            if (balls[i].inPlay && balls[i].y > ScreenHeight)
+            if (balls[i].IsInPlay() && balls[i].GetY() > ScreenHeight)
             {
-                float lastX = balls[i].x;
-                float lastY = balls[i].y;
-                balls[i].inPlay = false;
+                float lastX = balls[i].GetX();
+                float lastY = balls[i].GetY();
+                balls[i].SetInPlay(false);
                 // When a ball is lost emit a white explosion particle effect at the ball's last position
                 particleSystem.Emit(20, lastX, ScreenHeight - 5, 1000.0f, 0xFFFFFF);
-                ma_engine_play_sound(&engine, "assets/collision.wav", NULL);
+                Audio::Play("assets/collision.wav");
             }
         }
         if (AllBallsLost())
@@ -262,7 +234,7 @@ void GameScene::Draw(Tmpl8::Surface* screen)
     paddle.Draw(backBuffer);
     for (int i = 0; i < MAX_BALLS; i++)
     {
-        if (balls[i].inPlay)
+        if (balls[i].IsInPlay())
         {
             balls[i].Draw(backBuffer);
         }
@@ -273,9 +245,20 @@ void GameScene::Draw(Tmpl8::Surface* screen)
         for (int j = 0; j < BRICK_COLUMNS; j++)
         {
             bricks[i][j].Draw(backBuffer,
-                OFFSET_X + j * (Brick::BRICK_WIDTH + GAP),
-                i * (Brick::BRICK_HEIGHT + GAP));
+                OFFSET_X + j * (bricks[i][j].BRICK_WIDTH + GAP),
+                i * (bricks[i][j].BRICK_HEIGHT + GAP));
         }
+    }
+
+    // draw trajectory only when aiming and mouse is above paddle
+    if (currentState == AIMING && mouseY < paddle.GetYPosition())
+    {
+        float dirX = mouseX - balls[0].GetX();
+        float dirY = mouseY - balls[0].GetY();
+        float length = sqrt(dirX * dirX + dirY * dirY);
+        dirX /= length;
+        dirY /= length;
+        DrawTrajectory(balls[0].GetX(), balls[0].GetY(), dirX, dirY);
     }
 
     particleSystem.Draw(backBuffer);

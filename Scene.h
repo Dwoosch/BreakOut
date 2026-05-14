@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-
+#include "Audio.h"
 #include "surface.h"
 
 class Scene {

@@ -3,17 +3,21 @@
 
 class Ball
 {
-	enum Shapes { CIRCLE, SQUARE, TRIANGLE };
-
 public:
-	float x, y;
-	float dx, dy;
-	bool inPlay; // indicates whether the ball is currently in play
-	Shapes shape;
-	void Move(bool bounceBottom);
+	void Move(bool bounceBottom, float deltaTime);
 
 	void Draw(Tmpl8::Surface* surface);
-	int GetVelocity() const;
+	int GetX();
+	int GetY();
+	void SetX(int value);
+	void SetY(int value);
+	float GetDX();
+	float GetDY();
+	void SetDX(float value);
+	void SetDY(float value);
+	bool IsInPlay();
+	void SetInPlay(bool value);
+	float GetVelocity() const;
 
 	Ball()
 	{
@@ -21,11 +25,13 @@ public:
 		y = 465;
 		dx = 0;
 		dy = 0;
-		shape = CIRCLE;
 		inPlay = false;
 	}
 
 private:
-	static constexpr float velocity = 5.0f; // set the ball's velocity
+	static constexpr float velocity = 750.0f; // set the ball's velocity in pixels per second
+	int x, y;
+	float dx, dy;
+	bool inPlay;
 };
 

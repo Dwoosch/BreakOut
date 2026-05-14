@@ -59,11 +59,15 @@ internally, this is completely safe. `shakeIntensity` decays each frame producin
 a natural falloff effect.
 
 ### Scene Manager Architecture
-`Game` is a pure scene manager it holds a `currentScene` pointer and delegates 
-all `Tick`, `Init`, `Shutdown` and input calls to it. Scenes signal a transition 
-by setting their `nextScene` pointer, which `Game::Tick` checks after each update. 
-This allows clean separation between `MenuScene`, `GameScene` and `GameOverScene` 
-with no coupling between scenes themselves.
+`Game` is a pure scene manager, it holds a `std::unique_ptr<Scene>` and delegates
+all `Tick`, `Draw`, `Init`, `Shutdown` and input calls to it. Scenes signal a 
+transition by returning a `std::unique_ptr<Scene>` from their `Tick` function
+returning `nullptr` means stay in the current scene, returning a new scene triggers 
+a transition. `Game` has zero knowledge of specific scene types, only the `Scene` 
+base class. A `SceneLink` helper class is used to wire scenes together without 
+scenes needing to know about each other directly. Memory is managed automatically 
+through `unique_ptr` ownership when a scene transitions, the old scene is 
+destroyed and the new one takes ownership
 
 ### Custom Surface Extensions
 Two functions were added to the Tmpl8 `Surface` class:
@@ -78,6 +82,7 @@ Two functions were added to the Tmpl8 `Surface` class:
 - miniaudio (single header, included)
 
 ## Credits:
+- Credits to Jeremiah van Oosten for help with the scene management! link to his discord https://discord.gg/gsxxaxc
 - Audio files are all sourced from Pixabay.com
 - Credits to https://pixabay.com/users/freesound_community-46691455/ for the background music and bounce sfx
 - Credits to https://pixabay.com/users/u_xmiiqyhi46-47475901/ for the starting sfx

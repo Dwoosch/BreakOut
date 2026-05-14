@@ -224,6 +224,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Audio.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="ball.cpp" />
     <ClCompile Include="brick.cpp" />
     <ClCompile Include="game.cpp" />
@@ -240,12 +244,12 @@
     <ClCompile Include="template.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Audio.h" />
     <ClInclude Include="ball.h" />
     <ClInclude Include="brick.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="GameOverScene.h" />
     <ClInclude Include="GameScene.h" />
-    <ClInclude Include="GameState.h" />
     <ClInclude Include="MenuScene.h" />
     <ClInclude Include="miniaudio.h" />
     <ClInclude Include="paddle.h" />

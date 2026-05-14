@@ -1,6 +1,5 @@
 #pragma once
 #include "Scene.h"
-#include "GameState.h"
 
 class GameOverScene : public Scene
 {
@@ -15,5 +14,6 @@ public:
 
 private:
     bool mouseClicked = false;
+	int finalScore = 0;
 };
 

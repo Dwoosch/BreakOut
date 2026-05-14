@@ -21,7 +21,7 @@ namespace Tmpl8 {
         void KeyDown(int key) {}
 
     private:
-        Surface* screen;
+        Surface* screen = nullptr;
         std::unique_ptr<Scene> currentScene;
     };
 

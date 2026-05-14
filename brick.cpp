@@ -7,23 +7,23 @@ void Brick::Draw(Tmpl8::Surface* surface, int x, int y)
     {
         surface->Bar(x, y, x + BRICK_WIDTH - 1, y + BRICK_HEIGHT - 1, color);
     }
-}   
+}
 
 void Brick::SetPowerup(PowerupType type)
 {
     powerup = type;
 
-	switch (powerup)
+    switch (powerup)
     {
-        case NONE:
-            color = RED; // red
-            break;
-        case WIDE_PADDLE:
-            color = BLUE; // blue
-            break;
-        case MULTI_BALL:
-            color = YELLOW; // yellow
-            break;
+    case NONE:
+        color = RED;
+        break;
+    case WIDE_PADDLE:
+        color = BLUE;
+        break;
+    case MULTI_BALL:
+        color = YELLOW;
+        break;
     }
 }
 
@@ -35,4 +35,14 @@ Brick::PowerupType Brick::GetPowerupType() const
 Tmpl8::Pixel Brick::GetColor() const
 {
     return color;
+}
+
+bool Brick::IsDestroyed()
+{
+    return destroyed;
+}
+
+void Brick::SetDestroyed(bool value)
+{
+    destroyed = value;
 }
